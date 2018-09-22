@@ -35,6 +35,10 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
+# Editors and IDE
+.vscode
+settings.json
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
