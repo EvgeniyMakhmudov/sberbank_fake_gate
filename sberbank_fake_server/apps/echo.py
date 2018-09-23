@@ -1,6 +1,6 @@
 from aiohttp import web
 
-__slots__ = ['app']
+__slots__ = ['init_app']
 
 
 routes = web.RouteTableDef()
@@ -17,5 +17,7 @@ async def echo(request: web.Request):
     return web.json_response(data=data)
 
 
-app = web.Application()
-app.add_routes(routes)
+def init_app():
+    app = web.Application()
+    app.add_routes(routes)
+    return app

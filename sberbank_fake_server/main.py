@@ -4,13 +4,18 @@ from aiohttp import web
 
 from .apps import (
     echo,
+    rest,
 )
 
 
 def init_app(config=None):
     app = web.Application()
 
-    app.add_subapp('/echo/', echo.app)
+    # global storage for sb orders
+    app['orders'] = {}
+
+    app.add_subapp('/echo/', echo.init_app())
+    app.add_subapp('/payment/rest/', rest.init_app())
 
     log = getLogger('aiohttp.access')
     log.setLevel(DEBUG)
@@ -18,7 +23,6 @@ def init_app(config=None):
     handler = StreamHandler()
     # handler.setFormatter(log_format)
     log.addHandler(handler)
-
     return app
 
 
