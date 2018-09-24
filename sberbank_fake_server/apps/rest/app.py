@@ -1,11 +1,10 @@
-# from functools import partial
-
 from aiohttp import web
 
 from sberbank_fake_server.models import SberbankOrder
-# from sberbank_fake_server.lib.routes_injector import SubAppMeta, route_class_method
+
 
 __slots__ = ['init_app']
+
 
 routes = web.RouteTableDef()
 
