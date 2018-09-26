@@ -2,6 +2,8 @@ from aiohttp import web
 
 from sberbank_fake_server.models import SberbankOrder
 
+from . import checkers
+
 
 __slots__ = ['init_app']
 
@@ -9,28 +11,9 @@ __slots__ = ['init_app']
 routes = web.RouteTableDef()
 
 
-async def check_and_return(request):
-    result = {}
-    json = await request.json()
-
-    result['orderNumber'] = json.get('orderNumber')
-    if result['orderNumber'] is None:
-        raise web.HTTPBadRequest(text='Incorrect orderNumber')
-
-    result['amount'] = json.get('amount')
-    if result['amount'] is None:
-        raise web.HTTPBadRequest(text='Incorrect amount')
-
-    result['returnUrl'] = json.get('returnUrl')
-    result['failUrl'] = json.get('failUrl')
-    result['description'] = json.get('description')
-
-    return result
-
-
 @routes.route('post', '/registerPreAuth.do')
 async def handle_registerPreAuth(request):
-    request_data = await check_and_return(request)
+    request_data = await checkers.registerPreAuth(request)
     sberbank_order = SberbankOrder()
     data = sberbank_order.registerPreAuth(
         orderNumber=request_data['orderNumber'],
@@ -41,6 +24,22 @@ async def handle_registerPreAuth(request):
     )
 
     request.config_dict['orders'][sberbank_order.id] = sberbank_order
+    return web.json_response(data)
+
+
+@routes.route('post', '/deposit.do')
+async def handle_deposit(request):
+    request_data = await checkers.deposit(request)
+
+    order = request.config_dict['orders'].get(request_data['orderId'])
+    if order is None:
+        data = {
+            'errorCode': '5',
+            'errorMessage': 'Неверный номер заказа',
+        }
+        return web.json_response(data)
+
+    data = order.deposit(request_data['amount'])
     return web.json_response(data)
 
 

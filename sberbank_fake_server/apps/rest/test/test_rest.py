@@ -34,3 +34,19 @@ async def test_handle_registerPreAuth__fail_amount(cli, upload):
     resp = await cli.post('/payment/rest/registerPreAuth.do', json=upload)
     assert resp.status == 400
     assert 'Incorrect amount' in await resp.text()
+
+
+async def test_handle_deposit(cli, app, upload):
+    resp = await cli.post('/payment/rest/registerPreAuth.do', json=upload)
+    assert resp.status == 200
+    auth_data = await resp.json()
+
+    d_data = {
+        'orderId': auth_data['orderId'],
+        'amount': upload['amount'],
+    }
+    resp = await cli.post('/payment/rest/deposit.do', json=d_data)
+    assert resp.status == 200
+
+    resp_data = await resp.json()
+    assert resp_data['errorCode'] == '0'

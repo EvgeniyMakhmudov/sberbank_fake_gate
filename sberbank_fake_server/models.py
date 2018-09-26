@@ -19,3 +19,14 @@ class SberbankOrder:
             'orderId': self.id,
             'formUrl': self.form_url,
         }
+
+    def deposit(self, amount):
+        if amount > self.amount:
+            raise ValueError()
+
+        self.amount = amount
+
+        return {
+            'errorCode': '0',
+            'errorMessage': 'Успешно',
+        }
