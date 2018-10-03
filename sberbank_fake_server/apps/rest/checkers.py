@@ -33,3 +33,14 @@ async def deposit(request):
         raise web.HTTPBadRequest(text='Incorrect amount')
 
     return result
+
+
+async def reverse(request):
+    result = {}
+    json = await request.json()
+
+    result['orderId'] = json.get('orderId')
+    if result['orderId'] is None:
+        raise web.HTTPBadRequest(text='Incorrect orderId')
+
+    return result

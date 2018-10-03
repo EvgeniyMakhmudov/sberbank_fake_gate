@@ -43,6 +43,22 @@ async def handle_deposit(request):
     return web.json_response(data)
 
 
+@routes.route('post', '/reverse.do')
+async def handle_reverse(request):
+    request_data = await checkers.reverse(request)
+
+    order = request.config_dict['orders'].get(request_data['orderId'])
+    if order is None:
+        data = {
+            'errorCode': '5',
+            'errorMessage': 'Неверный номер заказа',
+        }
+        return web.json_response(data)
+
+    data = order.reverse()
+    return web.json_response(data)
+
+
 def init_app():
     app = web.Application()
     app.add_routes(routes)
