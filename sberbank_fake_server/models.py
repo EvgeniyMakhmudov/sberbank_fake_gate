@@ -47,3 +47,23 @@ class SberbankOrder:
             'errorCode': '0',
             'errorMessage': 'Успешно',
         }
+
+    def refund(self, amount):
+        if self.status != 'deposit':
+            return {
+                'errorCode': '7',
+                'errorMessage': 'Платёж должен быть в корректном состоянии',
+            }
+
+        if amount > self.amount:
+            return {
+                'errorCode': '7',
+                'errorMessage': 'Неверная сумма депозита',
+            }
+
+        self.amount -= amount
+
+        return {
+            'errorCode': '0',
+            'errorMessage': 'Успешно',
+        }

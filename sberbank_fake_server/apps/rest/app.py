@@ -17,7 +17,7 @@ async def handle_registerPreAuth(request):
     sberbank_order = SberbankOrder()
     data = sberbank_order.registerPreAuth(
         orderNumber=request_data['orderNumber'],
-        amount=request_data['amount'],
+        amount=int(request_data['amount']),
         returnUrl=request_data['returnUrl'],
         failUrl=request_data['failUrl'],
         description=request_data['description'],
@@ -39,7 +39,7 @@ async def handle_deposit(request):
         }
         return web.json_response(data)
 
-    data = order.deposit(request_data['amount'])
+    data = order.deposit(int(request_data['amount']))
     return web.json_response(data)
 
 
@@ -56,6 +56,22 @@ async def handle_reverse(request):
         return web.json_response(data)
 
     data = order.reverse()
+    return web.json_response(data)
+
+
+@routes.route('post', '/refund.do')
+async def handle_refund(request):
+    request_data = await checkers.refund(request)
+
+    order = request.config_dict['orders'].get(request_data['orderId'])
+    if order is None:
+        data = {
+            'errorCode': '5',
+            'errorMessage': 'Неверный номер заказа',
+        }
+        return web.json_response(data)
+
+    data = order.refund(int(request_data['amount']))
     return web.json_response(data)
 
 

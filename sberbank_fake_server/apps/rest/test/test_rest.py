@@ -93,3 +93,62 @@ async def test_handle_reverse__fail(cli, app, upload):
     resp_data = await resp.json()
     assert resp_data['errorCode'] != '0'
     assert resp_data['errorMessage']
+
+
+async def test_handle_refund__success(cli, app, upload):
+    resp = await cli.post('/payment/rest/registerPreAuth.do', json=upload)
+    assert resp.status == 200
+    auth_data = await resp.json()
+
+    d_data = {
+        'orderId': auth_data['orderId'],
+        'amount': upload['amount'],
+    }
+    resp = await cli.post('/payment/rest/deposit.do', json=d_data)
+    assert resp.status == 200
+    resp_data = await resp.json()
+    assert resp_data['errorCode'] == '0'
+
+    resp = await cli.post('/payment/rest/refund.do', json=d_data)
+    assert resp.status == 200
+    resp_data = await resp.json()
+    assert resp_data['errorCode'] == '0'
+
+
+async def test_handle_refund__fail_by_amount(cli, app, upload):
+    resp = await cli.post('/payment/rest/registerPreAuth.do', json=upload)
+    assert resp.status == 200
+    auth_data = await resp.json()
+
+    d_data = {
+        'orderId': auth_data['orderId'],
+        'amount': upload['amount'],
+    }
+    resp = await cli.post('/payment/rest/deposit.do', json=d_data)
+    assert resp.status == 200
+    resp_data = await resp.json()
+    assert resp_data['errorCode'] == '0'
+
+    d_data['amount'] *= 2
+    resp = await cli.post('/payment/rest/refund.do', json=d_data)
+    assert resp.status == 200
+    resp_data = await resp.json()
+    assert resp_data['errorCode'] == '7'
+    assert resp_data['errorMessage']
+
+
+async def test_handle_refund__fail_by_status(cli, app, upload):
+    resp = await cli.post('/payment/rest/registerPreAuth.do', json=upload)
+    assert resp.status == 200
+    auth_data = await resp.json()
+
+    d_data = {
+        'orderId': auth_data['orderId'],
+        'amount': upload['amount'],
+    }
+
+    resp = await cli.post('/payment/rest/refund.do', json=d_data)
+    assert resp.status == 200
+    resp_data = await resp.json()
+    assert resp_data['errorCode'] == '7'
+    assert resp_data['errorMessage']

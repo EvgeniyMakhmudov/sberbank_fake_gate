@@ -44,3 +44,18 @@ async def reverse(request):
         raise web.HTTPBadRequest(text='Incorrect orderId')
 
     return result
+
+
+async def refund(request):
+    result = {}
+    json = await request.json()
+
+    result['orderId'] = json.get('orderId')
+    if result['orderId'] is None:
+        raise web.HTTPBadRequest(text='Incorrect orderId')
+
+    result['amount'] = json.get('amount')
+    if result['amount'] is None:
+        raise web.HTTPBadRequest(text='Incorrect amount')
+
+    return result
