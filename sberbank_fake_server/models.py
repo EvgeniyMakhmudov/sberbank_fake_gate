@@ -1,4 +1,5 @@
 from uuid import uuid4
+from .order_status import getOrderStatusExtended
 
 
 class SberbankOrder:
@@ -67,3 +68,6 @@ class SberbankOrder:
             'errorCode': '0',
             'errorMessage': 'Успешно',
         }
+
+    def getOrderStatusExtended(self):
+        return getOrderStatusExtended(self)

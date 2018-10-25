@@ -59,3 +59,14 @@ async def refund(request):
         raise web.HTTPBadRequest(text='Incorrect amount')
 
     return result
+
+
+async def getOrderStatusExtended(request):
+    result = {}
+    json = await request.json()
+
+    result['orderId'] = json.get('orderId')
+    if result['orderId'] is None:
+        raise web.HTTPBadRequest(text='Incorrect orderId')
+
+    return result

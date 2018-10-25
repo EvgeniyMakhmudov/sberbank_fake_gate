@@ -75,6 +75,22 @@ async def handle_refund(request):
     return web.json_response(data)
 
 
+@routes.route('post', '/getOrderStatusExtended.do')
+async def handle_getOrderStatusExtended(request):
+    request_data = await checkers.getOrderStatusExtended(request)
+
+    order = request.config_dict['orders'].get(request_data['orderId'])
+    if order is None:
+        data = {
+            'errorCode': '5',
+            'errorMessage': 'Неверный номер заказа',
+        }
+        return web.json_response(data)
+
+    data = order.getOrderStatusExtended()
+    return web.json_response(data)
+
+
 def init_app():
     app = web.Application()
     app.add_routes(routes)
