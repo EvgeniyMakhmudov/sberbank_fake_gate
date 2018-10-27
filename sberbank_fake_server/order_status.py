@@ -67,14 +67,11 @@ def _bindingInfo(order):
 
 
 def _paymentAmountInfo(order):
-    NotImplemented
-    # if order.status == '':
-    #     return
     return {
-        'approvedAmount': 0,
-        'depositedAmount': 0,
-        'paymentState': 'CREATED',
-        'refundedAmount': 0,
+        'approvedAmount': order.approvedAmount,
+        'depositedAmount': order.depositedAmount,
+        'paymentState': order.status.value,
+        'refundedAmount': order.refundedAmount,
     }
 
 

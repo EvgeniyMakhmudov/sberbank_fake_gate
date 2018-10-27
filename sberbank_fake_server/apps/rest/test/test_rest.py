@@ -59,6 +59,22 @@ async def test_handle_reverse__success(cli, app, upload):
 
     d_data = {
         'orderId': auth_data['orderId'],
+    }
+
+    resp = await cli.post('/payment/rest/reverse.do', json=d_data)
+    assert resp.status == 200
+    resp_data = await resp.json()
+    assert resp_data['errorCode'] == '0'
+    assert resp_data['errorMessage']
+
+
+async def test_handle_reverse__fail(cli, app, upload):
+    resp = await cli.post('/payment/rest/registerPreAuth.do', json=upload)
+    assert resp.status == 200
+    auth_data = await resp.json()
+
+    d_data = {
+        'orderId': auth_data['orderId'],
         'amount': upload['amount'],
     }
     resp = await cli.post('/payment/rest/deposit.do', json=d_data)
@@ -72,27 +88,7 @@ async def test_handle_reverse__success(cli, app, upload):
     resp = await cli.post('/payment/rest/reverse.do', json=d_data)
     assert resp.status == 200
     resp_data = await resp.json()
-    assert resp_data['errorCode'] == '0'
-
-
-async def test_handle_reverse__fail(cli, app, upload):
-    resp = await cli.post('/payment/rest/registerPreAuth.do', json=upload)
-    assert resp.status == 200
-    auth_data = await resp.json()
-
-    d_data = {
-        'orderId': auth_data['orderId'],
-    }
-    resp = await cli.post('/payment/rest/reverse.do', json=d_data)
-    assert resp.status == 200
-    resp_data = await resp.json()
-    assert resp_data['errorCode'] == '0'
-
-    resp = await cli.post('/payment/rest/reverse.do', json=d_data)
-    assert resp.status == 200
-    resp_data = await resp.json()
-    assert resp_data['errorCode'] != '0'
-    assert resp_data['errorMessage']
+    assert resp_data['errorCode'] == '7'
 
 
 async def test_handle_refund__success(cli, app, upload):
