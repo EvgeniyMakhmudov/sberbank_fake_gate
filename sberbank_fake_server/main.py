@@ -5,6 +5,7 @@ from aiohttp import web
 from .apps import (
     echo,
     rest,
+    service,
 )
 
 
@@ -16,6 +17,7 @@ def init_app(config=None):
 
     app.add_subapp('/echo/', echo.init_app())
     app.add_subapp('/payment/rest/', rest.init_app())
+    app.add_subapp('/service/', service.init_app())
 
     log = getLogger('aiohttp.access')
     log.setLevel(DEBUG)
