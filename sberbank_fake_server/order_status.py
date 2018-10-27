@@ -46,7 +46,11 @@ def _errors(order):
 
 
 def _merchantOrderParams(order):
-    return getattr(order, 'merchantOrderParams', None)
+    mop = getattr(order, 'merchantOrderParams', None)
+    if mop is None:
+        return None
+    else:
+        return {'merchantOrderParams': mop}
 
 
 def _cardAuthInfo(order):

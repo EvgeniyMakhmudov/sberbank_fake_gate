@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 
@@ -9,6 +11,7 @@ def upload(faker):
         'returnUrl': faker.url(),
         'failUrl': 'asd',
         'description': 'qwe asd zxc',
+        'jsonParams': json.dumps({'client_order': '123', 'ttl': "900s"}),
     }
 
 
@@ -171,3 +174,5 @@ async def test_handle_getOrderStatusExtended(cli, app, upload):
     assert resp_data['orderNumber'] == upload['orderNumber']
     assert 'actionCode' in resp_data
     assert 'errorCode' in resp_data
+    assert 'merchantOrderParams' in resp_data
+    assert len(resp_data['merchantOrderParams']) == 2

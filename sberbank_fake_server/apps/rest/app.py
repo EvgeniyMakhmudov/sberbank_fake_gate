@@ -21,6 +21,7 @@ async def handle_registerPreAuth(request):
         returnUrl=request_data['returnUrl'],
         failUrl=request_data['failUrl'],
         description=request_data['description'],
+        jsonParams=request_data['jsonParams'],
     )
 
     request.config_dict['orders'][sberbank_order.id] = sberbank_order

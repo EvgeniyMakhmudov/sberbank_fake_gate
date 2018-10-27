@@ -1,3 +1,4 @@
+import json as json_module
 from aiohttp import web
 
 
@@ -16,6 +17,15 @@ async def registerPreAuth(request):
     result['returnUrl'] = json.get('returnUrl')
     result['failUrl'] = json.get('failUrl')
     result['description'] = json.get('description')
+    result['language'] = json.get('language', 'ru')
+
+    if 'jsonParams' in json:
+        try:
+            result['jsonParams'] = json_module.loads(json['jsonParams'])
+        except Exception:
+            raise web.HTTPBadRequest('Incorrect jsonParams')
+    else:
+        result['jsonParams'] = None
 
     return result
 

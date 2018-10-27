@@ -12,15 +12,29 @@ class Statuses(Enum):
     reversed = 'REVERSED'  # TODO: check it by real case
 
 
+def parse_jsonParams(d):
+    if d is None:
+        return None
+
+    result = []
+    for k, v in d.items():
+        result.append({
+            'name': k,
+            'value': v,
+        })
+    return result
+
+
 class SberbankOrder:
     def registerPreAuth(self, *, orderNumber, amount, returnUrl, failUrl,
-                        description, host='http://localhost:8000'):
+                        description, jsonParams, host='http://localhost:8000'):
 
         self.orderNumber = orderNumber
         self.preauth_amount = amount
         self.returnUrl = returnUrl
         self.failUrl = failUrl
         self.description = description
+        self.merchantOrderParams = parse_jsonParams(jsonParams)
         # self.lang  # TODO:
 
         self.id = str(uuid4())
