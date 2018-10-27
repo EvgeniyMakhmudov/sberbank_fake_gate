@@ -1,15 +1,7 @@
 from uuid import uuid4
-from enum import Enum
 
 from .order_status import getOrderStatusExtended
-
-
-class Statuses(Enum):
-    created = 'CREATED'
-    deposited = 'DEPOSITED'
-    refunded = 'REFUNDED'
-    declined = 'DECLINED'
-    reversed = 'REVERSED'  # TODO: check it by real case
+from .datas import Statuses
 
 
 def parse_jsonParams(d):
@@ -41,7 +33,8 @@ class SberbankOrder:
         template = '{}/payment/payment_ru.html?mdOrder={}'
         self.form_url = template.format(host, self.id)
 
-        self.status = Statuses.created
+        self.status = Statuses.created  # Generally mapping to payment status
+        self.orderStatus = 0
 
         # moneys amount
         self.approvedAmount = 0
@@ -61,6 +54,7 @@ class SberbankOrder:
         self.depositedAmount = amount
 
         self.status = Statuses.deposited
+        self.orderStatus = 2
 
         return {
             'errorCode': '0',
@@ -75,6 +69,7 @@ class SberbankOrder:
             }
 
         self.status = Statuses.reversed
+        self.orderStatus = 3  # TODO: check is it really
 
         self.approvedAmount = 0
 
@@ -100,11 +95,19 @@ class SberbankOrder:
         self.refundedAmount += amount
 
         self.status = Statuses.refunded
+        self.orderStatus = 4
 
         return {
             'errorCode': '0',
             'errorMessage': 'Успешно',
         }
+
+    def ask3ds(self):
+        self.orderStatus = 5
+
+    def decline(self):
+        self.status = Statuses.declined
+        self.orderStatus = 6
 
     def getOrderStatusExtended(self):
         return getOrderStatusExtended(self)

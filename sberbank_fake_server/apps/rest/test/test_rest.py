@@ -172,6 +172,8 @@ async def test_handle_getOrderStatusExtended(cli, app, upload):
     assert resp.status == 200
     resp_data = await resp.json()
     assert resp_data['orderNumber'] == upload['orderNumber']
+    assert resp_data['orderStatus'] == 2
+
     assert 'actionCode' in resp_data
     assert 'errorCode' in resp_data
     assert 'merchantOrderParams' in resp_data

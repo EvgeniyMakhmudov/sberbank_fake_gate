@@ -24,6 +24,7 @@ def getOrderStatusExtended(order):
 def _base(order):
     return {
         'orderNumber': order.orderNumber,
+        'orderStatus': order.orderStatus,
         'currency': getattr(order, 'currency', '643'),
         'orderDescription': getattr(order, 'description', ''),
         'ip': getattr(order, 'ip', ''),
@@ -31,10 +32,10 @@ def _base(order):
 
 
 def _actions(order):
-    # normal case
+    # It is deeply internal SB value, at now does not discover at well
     return {
-        'actionCode': -100,
-        'actionCodeDescription': '',
+        'actionCode': getattr(order, 'actioCode', -100),
+        'actionCodeDescription': getattr(order, 'actionCodeDescription', ''),
     }
 
 
